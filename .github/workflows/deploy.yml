@@ -1,0 +1,21 @@
+name: Build and Deploy
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 连接服务器拉取代码部署
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.UCLOUD_HOST }}
+          username: ${{ secrets.UCLOUD_USERNAME }}
+          password: ${{ secrets.UCLOUD_PASSWORD }}
+          script: |
+            cd /var/next-blog-strapi
+            git pull origin main
+
+            docker compose down
+            docker compose up -d --build
